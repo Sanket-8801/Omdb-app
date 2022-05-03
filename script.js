@@ -8,6 +8,7 @@ const readMore = document.getElementsByClassName('read-more')
 const readMorePlot = document.getElementsByClassName('read-more-plot')
 const movieKey = document.getElementsByClassName('movie-key')
 const localStorageKeys = Object.keys(localStorage)
+const { MongoClient } = require("mongodb");
 
 if (searchBtn) {
     searchBtn.addEventListener('click', searchMovies)
@@ -97,7 +98,37 @@ function showCompletePlot(readMoreMovieID, hideReadMore) {
     hideReadMore.style.display = 'none'
 }
 
-function addToWatchlist(movieIDkey, movieID, watchlistBtnKey, removeBtnKey) {
+async function addToWatchlist(movieIDkey, movieID, watchlistBtnKey, removeBtnKey) {
+    console.log(movieID.id)
+    const a = movieID.id
+    const b= movieID.Title
+    let sanket = await fetch(`https://www.omdbapi.com/?i=${movieID.id}&apikey=e668e570`)
+    const ab = await sanket.json()
+    console.log(ab)
+    
+    const uri =
+    "mongodb://0.0.0.0:27017/";
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        // Connect the client to the server
+        await client.connect();
+        const database = client.db("local");
+        const omdb = database.collection("omdb");
+
+
+          const result = await omdb.insertOne(ab);
+          console.log(`A document was inserted with the _id: ${result.insertedId}`);
+
+        // Establish and verify connection
+        await client.db("admin").command({ ping: 1 });
+        console.log("Connected successfully to server");
+      } finally {
+        // Ensures that the client will close when you finish/error
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
     localStorage.setItem(movieIDkey.innerHTML, movieID.innerHTML)
     watchlistBtnKey.style.display = 'none'
     removeBtnKey.style.display = 'inline'
