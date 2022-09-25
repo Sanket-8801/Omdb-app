@@ -24,13 +24,13 @@ async function searchMovies() {
     let res = await fetch(`https://www.omdbapi.com/?s=${searchInput.value.trim()}&apikey=e668e570`)
     let data = await res.json()
 
-    const movies = data.Search;
+    const movies = data.Search
 
     // Get and display search results
     movies.forEach(async (movie) => {
         let response = await fetch(`https://www.omdbapi.com/?i=${movie.imdbID}&apikey=e668e570`)
-        let moviesListData = await response.json();
-        console.log(moviesListData);
+        let moviesListData = await response.json()
+        console.log(moviesListData)
 
         const readMoreMovieID = moviesListData.imdbID + 'more'
         const hideReadMore = moviesListData.imdbID + 'hide'
@@ -97,10 +97,35 @@ function showCompletePlot(readMoreMovieID, hideReadMore) {
     hideReadMore.style.display = 'none'
 }
 
-async function addToWatchlist(movieIDkey, movieID, watchlistBtnKey, removeBtnKey) {
-    console.log(movieID.id)
-    const a = movieID.id
-    const b= movieID.Title
+function addToWatchlist(movieIDkey, movieID, watchlistBtnKey, removeBtnKey) {
+    localStorage.setItem(movieIDkey.innerHTML, movieID.innerHTML)
+    watchlistBtnKey.style.display = 'none'
+    removeBtnKey.style.display = 'inline'
+}
+
+function removeFromWatchlist(movieIDkey, removeBtnKey, watchlistBtnKey, removeBtnKey) {
+    localStorage.removeItem(movieIDkey.innerHTML)
+
+    // Get parent element (the movie card div) and remove it
+    if (watchlist) {
+        localStorage.removeItem(movieIDkey.innerHTML)
+
+        const parentEl = document.getElementById(movieIDkey.innerHTML).parentElement
+        parentEl.remove()
+    }
+
+    watchlistBtnKey.style.display = 'inline'
+    removeBtnKey.style.display = 'none'
+
+    // Display default elements if local storage empty
+    if (watchlist && localStorage.length === 0) {
+        if (watchlist.children) {
+            const children = watchlist.children
+            const childrenArr = Array.prototype.slice.call(children)
+            childrenArr.forEach((child) => (child.style.display = 'flex'))
+        }
+    }
+}
 
 // Hide default elements if data is in local storage
 if (watchlist && localStorage.length > 0) {
