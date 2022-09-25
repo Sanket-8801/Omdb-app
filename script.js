@@ -8,7 +8,6 @@ const readMore = document.getElementsByClassName('read-more')
 const readMorePlot = document.getElementsByClassName('read-more-plot')
 const movieKey = document.getElementsByClassName('movie-key')
 const localStorageKeys = Object.keys(localStorage)
-const { MongoClient } = require("mongodb");
 
 if (searchBtn) {
     searchBtn.addEventListener('click', searchMovies)
@@ -102,61 +101,6 @@ async function addToWatchlist(movieIDkey, movieID, watchlistBtnKey, removeBtnKey
     console.log(movieID.id)
     const a = movieID.id
     const b= movieID.Title
-    let sanket = await fetch(`https://www.omdbapi.com/?i=${movieID.id}&apikey=e668e570`)
-    const ab = await sanket.json()
-    console.log(ab)
-    
-    const uri =
-    "mongodb://0.0.0.0:27017/";
-    const client = new MongoClient(uri);
-    async function run() {
-      try {
-        // Connect the client to the server
-        await client.connect();
-        const database = client.db("local");
-        const omdb = database.collection("omdb");
-
-
-          const result = await omdb.insertOne(ab);
-          console.log(`A document was inserted with the _id: ${result.insertedId}`);
-
-        // Establish and verify connection
-        await client.db("admin").command({ ping: 1 });
-        console.log("Connected successfully to server");
-      } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
-      }
-    }
-    run().catch(console.dir);
-    localStorage.setItem(movieIDkey.innerHTML, movieID.innerHTML)
-    watchlistBtnKey.style.display = 'none'
-    removeBtnKey.style.display = 'inline'
-}
-
-function removeFromWatchlist(movieIDkey, removeBtnKey, watchlistBtnKey, removeBtnKey) {
-    localStorage.removeItem(movieIDkey.innerHTML)
-
-    // Get parent element (the movie card div) and remove it
-    if (watchlist) {
-        localStorage.removeItem(movieIDkey.innerHTML)
-
-        const parentEl = document.getElementById(movieIDkey.innerHTML).parentElement
-        parentEl.remove()
-    }
-
-    watchlistBtnKey.style.display = 'inline'
-    removeBtnKey.style.display = 'none'
-
-    // Display default elements if local storage empty
-    if (watchlist && localStorage.length === 0) {
-        if (watchlist.children) {
-            const children = watchlist.children
-            const childrenArr = Array.prototype.slice.call(children)
-            childrenArr.forEach((child) => (child.style.display = 'flex'))
-        }
-    }
-}
 
 // Hide default elements if data is in local storage
 if (watchlist && localStorage.length > 0) {
