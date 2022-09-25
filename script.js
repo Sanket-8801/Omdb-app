@@ -24,13 +24,13 @@ async function searchMovies() {
     let res = await fetch(`https://www.omdbapi.com/?s=${searchInput.value.trim()}&apikey=e668e570`)
     let data = await res.json()
 
-    const movies = data.Search
+    const movies = data.Search;
 
     // Get and display search results
     movies.forEach(async (movie) => {
         let response = await fetch(`https://www.omdbapi.com/?i=${movie.imdbID}&apikey=e668e570`)
-        let moviesListData = await response.json()
-        console.log(moviesListData)
+        let moviesListData = await response.json();
+        console.log(moviesListData);
 
         const readMoreMovieID = moviesListData.imdbID + 'more'
         const hideReadMore = moviesListData.imdbID + 'hide'
